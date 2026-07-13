@@ -1,0 +1,85 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus, Download, MoreHorizontal } from "lucide-react";
+import { PageHeader, GlassCard, Badge, StatCard } from "@/components/crm-ui";
+
+export const Route = createFileRoute("/invoices")({
+  head: () => ({
+    meta: [
+      { title: "Invoices — UniqueCRM" },
+      { name: "description", content: "Billing, revenue, and outstanding invoices." },
+    ],
+  }),
+  component: InvoicesPage,
+});
+
+const invoices = [
+  { id: "INV-2041", client: "Acme Corp", amount: "$42,000", due: "Aug 20, 2026", status: "Paid", tone: "success" as const },
+  { id: "INV-2040", client: "Globex", amount: "$18,500", due: "Aug 22, 2026", status: "Sent", tone: "info" as const },
+  { id: "INV-2039", client: "Stark Industries", amount: "$120,000", due: "Aug 28, 2026", status: "Sent", tone: "info" as const },
+  { id: "INV-2038", client: "Initech", amount: "$9,800", due: "Aug 12, 2026", status: "Overdue", tone: "warning" as const },
+  { id: "INV-2037", client: "Umbrella Co.", amount: "$56,000", due: "Aug 5, 2026", status: "Paid", tone: "success" as const },
+  { id: "INV-2036", client: "Northwind", amount: "$14,000", due: "Aug 2, 2026", status: "Draft", tone: "default" as const },
+];
+
+function InvoicesPage() {
+  return (
+    <div className="mx-auto max-w-7xl">
+      <PageHeader
+        title="Invoices"
+        subtitle="Billing and revenue collection"
+        actions={
+          <button className="gradient-brand-bg glow-shadow-sm inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02]">
+            <Plus className="h-4 w-4" />
+            New invoice
+          </button>
+        }
+      />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label="Outstanding" value="$164,800" delta="+8.2%" />
+        <StatCard label="Paid this month" value="$284,920" delta="+18.2%" />
+        <StatCard label="Overdue" value="$9,800" delta="-2.4%" />
+      </div>
+
+      <GlassCard className="mt-6">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <th className="pb-3 pr-4 font-medium">Invoice</th>
+                <th className="pb-3 pr-4 font-medium">Client</th>
+                <th className="pb-3 pr-4 font-medium">Amount</th>
+                <th className="pb-3 pr-4 font-medium">Due</th>
+                <th className="pb-3 pr-4 font-medium">Status</th>
+                <th className="pb-3" />
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.map((inv) => (
+                <tr key={inv.id} className="border-t border-white/5">
+                  <td className="py-3 pr-4 font-mono text-xs">{inv.id}</td>
+                  <td className="py-3 pr-4 font-medium">{inv.client}</td>
+                  <td className="py-3 pr-4 font-semibold">{inv.amount}</td>
+                  <td className="py-3 pr-4 text-muted-foreground">{inv.due}</td>
+                  <td className="py-3 pr-4">
+                    <Badge tone={inv.tone}>{inv.status}</Badge>
+                  </td>
+                  <td className="py-3 text-right">
+                    <div className="flex justify-end gap-1">
+                      <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
+                        <Download className="h-3.5 w-3.5" />
+                      </button>
+                      <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
+                        <MoreHorizontal className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </GlassCard>
+    </div>
+  );
+}

@@ -3,12 +3,18 @@ import {
   DollarSign,
   Users,
   Target,
-  TrendingUp,
+  CheckSquare,
   ArrowUpRight,
   MoreHorizontal,
+  Video,
   Phone,
-  Mail,
-  Calendar,
+  UserPlus,
+  CalendarPlus,
+  ListPlus,
+  Clock,
+  MapPin,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react";
 import { PageHeader, StatCard, GlassCard, Badge, Avatar } from "@/components/crm-ui";
 
@@ -17,26 +23,34 @@ export const Route = createFileRoute("/")({
 });
 
 const pipelineStages = [
-  { name: "Lead", count: 42, value: "$128K", color: "from-purple-500/40 to-purple-500/5" },
-  { name: "Qualified", count: 28, value: "$264K", color: "from-fuchsia-500/40 to-fuchsia-500/5" },
-  { name: "Proposal", count: 14, value: "$412K", color: "from-pink-500/40 to-pink-500/5" },
-  { name: "Negotiation", count: 8, value: "$298K", color: "from-rose-500/40 to-rose-500/5" },
-  { name: "Won", count: 12, value: "$186K", color: "from-emerald-500/40 to-emerald-500/5" },
-];
-
-const recentDeals = [
-  { name: "Acme Corp — Enterprise", owner: "Ava Chen", value: "$42,000", stage: "Proposal", tone: "info" as const },
-  { name: "Northwind Rebrand", owner: "Liam Patel", value: "$18,500", stage: "Qualified", tone: "warning" as const },
-  { name: "Globex API Integration", owner: "Sofia Reyes", value: "$67,200", stage: "Negotiation", tone: "brand" as const },
-  { name: "Initech Onboarding", owner: "Noah Kim", value: "$9,800", stage: "Won", tone: "success" as const },
-  { name: "Stark Industries Retainer", owner: "Ava Chen", value: "$120,000", stage: "Proposal", tone: "info" as const },
+  { name: "Lead", count: 42, value: "$128K", pct: 100 },
+  { name: "Qualified", count: 28, value: "$264K", pct: 78 },
+  { name: "Proposal", count: 14, value: "$412K", pct: 58 },
+  { name: "Negotiation", count: 8, value: "$298K", pct: 38 },
+  { name: "Won", count: 12, value: "$186K", pct: 22 },
 ];
 
 const activities = [
-  { user: "Ava Chen", action: "closed", target: "Initech Onboarding", time: "12m ago", icon: Target },
-  { user: "Liam Patel", action: "called", target: "Sarah at Acme Corp", time: "1h ago", icon: Phone },
-  { user: "Sofia Reyes", action: "emailed", target: "Globex procurement", time: "3h ago", icon: Mail },
-  { user: "Noah Kim", action: "scheduled demo with", target: "Umbrella Co.", time: "Yesterday", icon: Calendar },
+  { user: "Ava Chen", action: "closed deal with", target: "Initech", time: "12m ago", tone: "success" as const },
+  { user: "Liam Patel", action: "called", target: "Sarah at Acme Corp", time: "1h ago", tone: "info" as const },
+  { user: "Sofia Reyes", action: "sent proposal to", target: "Globex", time: "3h ago", tone: "brand" as const },
+  { user: "Noah Kim", action: "scheduled demo with", target: "Umbrella Co.", time: "Yesterday", tone: "warning" as const },
+  { user: "Ava Chen", action: "added note on", target: "Stark Industries", time: "Yesterday", tone: "default" as const },
+];
+
+const meetings = [
+  { title: "Demo — Umbrella Co.", time: "Today, 2:00 PM", type: "Video", icon: Video, with: "Emma Wilson" },
+  { title: "Discovery call — Hooli", time: "Today, 4:30 PM", type: "Call", icon: Phone, with: "Lucas Meyer" },
+  { title: "QBR — Acme Corp", time: "Tomorrow, 10:00 AM", type: "Video", icon: Video, with: "Sarah Johnson" },
+  { title: "Onsite — Stark Industries", time: "Aug 16, 9:00 AM", type: "Onsite", icon: MapPin, with: "James O'Brien" },
+];
+
+const leads = [
+  { name: "Priya Nair", company: "Northwind", source: "Website", score: 92, tone: "brand" as const },
+  { name: "Michael Chen", company: "Globex", source: "Referral", score: 88, tone: "success" as const },
+  { name: "James O'Brien", company: "Stark Industries", source: "LinkedIn", score: 76, tone: "info" as const },
+  { name: "Aiko Tanaka", company: "Wayne Enterprises", source: "Event", score: 71, tone: "info" as const },
+  { name: "Lucas Meyer", company: "Hooli", source: "Cold outbound", score: 54, tone: "warning" as const },
 ];
 
 function Dashboard() {
@@ -53,91 +67,198 @@ function Dashboard() {
         }
       />
 
-      {/* Stats */}
+      {/* Top stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Revenue (MTD)" value="$284,920" delta="+18.2%" icon={<DollarSign className="h-5 w-5" />} />
+        <StatCard label="Total Leads" value="1,284" delta="+12.7%" icon={<Users className="h-5 w-5" />} />
         <StatCard label="Active Deals" value="104" delta="+6.4%" icon={<Target className="h-5 w-5" />} />
-        <StatCard label="New Contacts" value="1,284" delta="+12.7%" icon={<Users className="h-5 w-5" />} />
-        <StatCard label="Win Rate" value="42%" delta="-1.2%" icon={<TrendingUp className="h-5 w-5" />} />
+        <StatCard label="Revenue (MTD)" value="$284,920" delta="+18.2%" icon={<DollarSign className="h-5 w-5" />} />
+        <StatCard label="Tasks Due Today" value="8" delta="-2.1%" icon={<CheckSquare className="h-5 w-5" />} />
       </div>
 
-      {/* Pipeline overview */}
+      {/* Sales Pipeline + Quick Actions */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <GlassCard className="lg:col-span-2">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold">Pipeline overview</h2>
+              <h2 className="text-lg font-semibold">Sales Pipeline</h2>
               <p className="text-xs text-muted-foreground">$1.28M in open opportunities</p>
             </div>
             <button className="glass rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
               This quarter
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            {pipelineStages.map((s) => (
-              <div
-                key={s.name}
-                className={`relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-b ${s.color} p-4`}
-              >
-                <p className="text-xs font-medium text-muted-foreground">{s.name}</p>
-                <p className="mt-1 text-xl font-bold tracking-tight">{s.count}</p>
-                <p className="mt-0.5 text-xs text-foreground/80">{s.value}</p>
+
+          {/* Funnel bars */}
+          <div className="space-y-3">
+            {pipelineStages.map((s, i) => (
+              <div key={s.name}>
+                <div className="mb-1.5 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2 w-2 rounded-full"
+                      style={{
+                        background: `linear-gradient(135deg, oklch(0.68 0.24 ${310 + i * 8}), oklch(0.72 0.25 ${340 + i * 4}))`,
+                        boxShadow: "0 0 8px oklch(0.72 0.25 325 / 0.6)",
+                      }}
+                    />
+                    <span className="font-medium">{s.name}</span>
+                    <span className="text-muted-foreground">· {s.count} deals</span>
+                  </div>
+                  <span className="gradient-text font-semibold">{s.value}</span>
+                </div>
+                <div className="relative h-3 overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${s.pct}%`,
+                      background: `linear-gradient(90deg, oklch(0.68 0.24 310), oklch(0.72 0.25 ${330 + i * 4}))`,
+                      boxShadow: "0 0 16px oklch(0.72 0.25 325 / 0.55)",
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Fake sparkline */}
-          <div className="mt-6">
-            <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Revenue trend</span>
-              <span className="gradient-text font-semibold">+18.2%</span>
+          {/* Revenue trend */}
+          <div className="mt-6 border-t border-white/5 pt-5">
+            <div className="mb-2 flex items-center justify-between text-xs">
+              <span className="font-medium">Revenue trend · 12 months</span>
+              <span className="gradient-text inline-flex items-center gap-1 font-semibold">
+                <TrendingUp className="h-3 w-3" />
+                +22.4% YoY
+              </span>
             </div>
-            <svg viewBox="0 0 600 120" className="h-32 w-full">
+            <svg viewBox="0 0 600 140" className="h-32 w-full">
               <defs>
-                <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="oklch(0.72 0.25 340)" stopOpacity="0.6" />
+                <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="oklch(0.72 0.25 340)" stopOpacity="0.55" />
                   <stop offset="100%" stopColor="oklch(0.68 0.24 310)" stopOpacity="0" />
                 </linearGradient>
-                <linearGradient id="g2" x1="0" x2="1" y1="0" y2="0">
+                <linearGradient id="stroke" x1="0" x2="1" y1="0" y2="0">
                   <stop offset="0%" stopColor="oklch(0.68 0.24 310)" />
                   <stop offset="100%" stopColor="oklch(0.72 0.25 340)" />
                 </linearGradient>
               </defs>
               <path
-                d="M0,90 C60,70 100,80 160,60 C220,40 260,70 320,50 C380,30 420,55 480,35 C540,20 580,30 600,20 L600,120 L0,120 Z"
-                fill="url(#g1)"
+                d="M0,110 C60,90 100,100 160,75 C220,50 260,85 320,60 C380,35 420,65 480,40 C540,20 580,30 600,18 L600,140 L0,140 Z"
+                fill="url(#area)"
               />
               <path
-                d="M0,90 C60,70 100,80 160,60 C220,40 260,70 320,50 C380,30 420,55 480,35 C540,20 580,30 600,20"
+                d="M0,110 C60,90 100,100 160,75 C220,50 260,85 320,60 C380,35 420,65 480,40 C540,20 580,30 600,18"
                 fill="none"
-                stroke="url(#g2)"
+                stroke="url(#stroke)"
                 strokeWidth="2.5"
+                style={{ filter: "drop-shadow(0 2px 8px oklch(0.72 0.25 340 / 0.6))" }}
               />
+              {[
+                [0, 110], [160, 75], [320, 60], [480, 40], [600, 18],
+              ].map(([x, y], i) => (
+                <circle key={i} cx={x} cy={y} r="3.5" fill="oklch(0.72 0.25 340)" style={{ filter: "drop-shadow(0 0 6px oklch(0.72 0.25 340))" }} />
+              ))}
             </svg>
           </div>
         </GlassCard>
 
+        {/* Quick Actions */}
+        <GlassCard className="relative overflow-hidden">
+          <div
+            aria-hidden
+            className="absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-30 blur-3xl"
+            style={{ background: "var(--gradient-brand)" }}
+          />
+          <div className="relative">
+            <div className="mb-4 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[color:var(--brand-pink)]" />
+              <h2 className="text-lg font-semibold">Quick Actions</h2>
+            </div>
+
+            <div className="space-y-2.5">
+              <QuickAction icon={UserPlus} label="Create Lead" desc="Capture a new prospect" />
+              <QuickAction icon={ListPlus} label="Create Task" desc="Add a follow-up to your list" />
+              <QuickAction icon={CalendarPlus} label="Create Meeting" desc="Book a call or demo" />
+            </div>
+
+            <div className="glass mt-5 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    Win rate
+                  </p>
+                  <p className="mt-1 text-2xl font-bold gradient-text">42%</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Quota</p>
+                  <p className="text-sm font-semibold">$1.2M / $2M</p>
+                </div>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/5">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: "60%",
+                    background: "var(--gradient-brand)",
+                    boxShadow: "0 0 16px oklch(0.72 0.25 340 / 0.6)",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* Activities + Meetings */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <GlassCard>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Activity</h2>
+            <h2 className="text-lg font-semibold">Recent Activities</h2>
             <button className="text-xs text-muted-foreground hover:text-foreground">View all</button>
           </div>
           <ul className="space-y-4">
-            {activities.map((a, i) => {
-              const Icon = a.icon;
+            {activities.map((a, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <Avatar name={a.user} tone={i} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm">
+                    <span className="font-medium">{a.user}</span>{" "}
+                    <span className="text-muted-foreground">{a.action}</span>{" "}
+                    <span className="font-medium">{a.target}</span>
+                  </p>
+                  <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {a.time}
+                  </p>
+                </div>
+                <Badge tone={a.tone}>{a.tone === "success" ? "Won" : a.tone === "brand" ? "Sent" : a.tone === "info" ? "Call" : a.tone === "warning" ? "Meeting" : "Note"}</Badge>
+              </li>
+            ))}
+          </ul>
+        </GlassCard>
+
+        <GlassCard>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Upcoming Meetings</h2>
+            <button className="text-xs text-muted-foreground hover:text-foreground">Calendar</button>
+          </div>
+          <ul className="space-y-3">
+            {meetings.map((m) => {
+              const Icon = m.icon;
               return (
-                <li key={i} className="flex items-start gap-3">
-                  <div className="gradient-brand-bg mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg text-white">
-                    <Icon className="h-3.5 w-3.5" />
+                <li
+                  key={m.title}
+                  className="group flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 transition hover:border-white/10 hover:bg-white/[0.05]"
+                >
+                  <div className="gradient-brand-bg grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white">
+                    <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm">
-                      <span className="font-medium">{a.user}</span>{" "}
-                      <span className="text-muted-foreground">{a.action}</span>{" "}
-                      <span className="font-medium">{a.target}</span>
+                    <p className="truncate text-sm font-medium">{m.title}</p>
+                    <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3 shrink-0" />
+                      {m.time} · with {m.with}
                     </p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{a.time}</p>
                   </div>
+                  <Badge tone="default">{m.type}</Badge>
                 </li>
               );
             })}
@@ -145,39 +266,53 @@ function Dashboard() {
         </GlassCard>
       </div>
 
-      {/* Recent deals */}
+      {/* Latest Leads */}
       <GlassCard className="mt-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold">Recent deals</h2>
-            <p className="text-xs text-muted-foreground">Latest opportunities across your team</p>
+            <h2 className="text-lg font-semibold">Latest Leads</h2>
+            <p className="text-xs text-muted-foreground">Freshest prospects, ranked by lead score</p>
           </div>
-          <button className="glass rounded-lg px-3 py-1.5 text-xs font-medium">Filter</button>
+          <button className="glass rounded-lg px-3 py-1.5 text-xs font-medium">View all</button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                <th className="pb-3 font-medium">Deal</th>
-                <th className="pb-3 font-medium">Owner</th>
-                <th className="pb-3 font-medium">Value</th>
-                <th className="pb-3 font-medium">Stage</th>
+                <th className="pb-3 pr-4 font-medium">Lead</th>
+                <th className="pb-3 pr-4 font-medium">Company</th>
+                <th className="pb-3 pr-4 font-medium">Source</th>
+                <th className="pb-3 pr-4 font-medium">Score</th>
                 <th className="pb-3" />
               </tr>
             </thead>
             <tbody>
-              {recentDeals.map((d, i) => (
-                <tr key={i} className="border-t border-white/5">
-                  <td className="py-3 pr-4 font-medium">{d.name}</td>
+              {leads.map((l, i) => (
+                <tr key={l.name} className="border-t border-white/5">
                   <td className="py-3 pr-4">
-                    <div className="flex items-center gap-2">
-                      <Avatar name={d.owner} tone={i} />
-                      <span className="text-muted-foreground">{d.owner}</span>
+                    <div className="flex items-center gap-3">
+                      <Avatar name={l.name} tone={i} />
+                      <span className="font-medium">{l.name}</span>
                     </div>
                   </td>
-                  <td className="py-3 pr-4 font-semibold">{d.value}</td>
+                  <td className="py-3 pr-4 text-muted-foreground">{l.company}</td>
                   <td className="py-3 pr-4">
-                    <Badge tone={d.tone}>{d.stage}</Badge>
+                    <Badge tone={l.tone}>{l.source}</Badge>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${l.score}%`,
+                            background: "var(--gradient-brand)",
+                            boxShadow: "0 0 10px oklch(0.72 0.25 340 / 0.5)",
+                          }}
+                        />
+                      </div>
+                      <span className="font-semibold">{l.score}</span>
+                    </div>
                   </td>
                   <td className="py-3 text-right">
                     <button className="rounded-lg p-1.5 text-muted-foreground hover:bg-white/5 hover:text-foreground">
@@ -191,5 +326,28 @@ function Dashboard() {
         </div>
       </GlassCard>
     </div>
+  );
+}
+
+function QuickAction({
+  icon: Icon,
+  label,
+  desc,
+}: {
+  icon: typeof UserPlus;
+  label: string;
+  desc: string;
+}) {
+  return (
+    <button className="group flex w-full items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-left transition hover:border-white/10 hover:bg-white/[0.05]">
+      <div className="gradient-brand-bg grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white transition-transform group-hover:scale-105 group-hover:glow-shadow-sm">
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">{label}</p>
+        <p className="truncate text-xs text-muted-foreground">{desc}</p>
+      </div>
+      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+    </button>
   );
 }
