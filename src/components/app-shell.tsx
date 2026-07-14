@@ -178,18 +178,22 @@ export function AppShell({ children }: { children: ReactNode }) {
               </kbd>
             </div>
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="relative ml-auto flex items-center gap-2">
               <button className="gradient-brand-bg glow-shadow-sm hidden items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] sm:inline-flex">
                 <Plus className="h-4 w-4" />
                 New
               </button>
-              <button className="glass relative grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition hover:text-foreground">
+              <ThemeToggle />
+              <button
+                onClick={() => setNotifOpen((v) => !v)}
+                className="glass relative grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition hover:text-foreground"
+                aria-label="Notifications"
+              >
                 <Bell className="h-4 w-4" />
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[color:var(--brand-pink)] shadow-[0_0_8px_var(--brand-pink)]" />
               </button>
-              <div className="gradient-brand-bg glow-shadow-sm grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold text-white">
-                AN
-              </div>
+              <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
+              <UserMenu />
             </div>
           </header>
 
