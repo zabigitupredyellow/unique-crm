@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "uniquecrm-mcp",
+      "version": "0.1.0",
+      "title": "UniqueCRM MCP"
+    },
+    "tools": [
+      {
+        "name": "list_leads",
+        "title": "List leads",
+        "description": "Return demo CRM leads from UniqueCRM. Optionally filter by status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Optional status filter.",
+              "type": "string",
+              "enum": [
+                "New",
+                "Contacted",
+                "Qualified",
+                "Proposal",
+                "Won",
+                "Lost"
+              ]
+            },
+            "limit": {
+              "description": "Max leads to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_deals",
+        "title": "List deals",
+        "description": "Return demo sales pipeline deals from UniqueCRM. Optionally filter by stage.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "stage": {
+              "description": "Optional pipeline stage filter.",
+              "type": "string",
+              "enum": [
+                "New Lead",
+                "Qualified",
+                "Meeting Scheduled",
+                "Proposal Sent",
+                "Negotiation",
+                "Won",
+                "Lost"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "pipeline_summary",
+        "title": "Pipeline summary",
+        "description": "Return an overview of UniqueCRM's sales pipeline: deals per stage, total value, and win rate (demo data).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_contacts",
+        "title": "Search contacts",
+        "description": "Search UniqueCRM demo contacts by name, company, or email substring (case-insensitive).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Substring to match against name, company, or email."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
