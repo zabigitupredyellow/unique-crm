@@ -10,12 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as InboxRouteImport } from './routes/inbox'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DesignSystemRouteImport } from './routes/design-system'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as ContactsRouteImport } from './routes/contacts'
@@ -32,6 +35,11 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -54,6 +62,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InvoicesRoute = InvoicesRouteImport.update({
   id: '/invoices',
   path: '/invoices',
@@ -62,6 +75,11 @@ const InvoicesRoute = InvoicesRouteImport.update({
 const InboxRoute = InboxRouteImport.update({
   id: '/inbox',
   path: '/inbox',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignSystemRoute = DesignSystemRouteImport.update({
@@ -135,12 +153,15 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof ContactsRoute
   '/deals': typeof DealsRoute
   '/design-system': typeof DesignSystemRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/inbox': typeof InboxRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/meetings': typeof MeetingsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/tasks': typeof TasksRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -156,12 +177,15 @@ export interface FileRoutesByTo {
   '/contacts': typeof ContactsRoute
   '/deals': typeof DealsRoute
   '/design-system': typeof DesignSystemRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/inbox': typeof InboxRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/meetings': typeof MeetingsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/tasks': typeof TasksRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -178,12 +202,15 @@ export interface FileRoutesById {
   '/contacts': typeof ContactsRoute
   '/deals': typeof DealsRoute
   '/design-system': typeof DesignSystemRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/inbox': typeof InboxRoute
   '/invoices': typeof InvoicesRoute
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/meetings': typeof MeetingsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/tasks': typeof TasksRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -201,12 +228,15 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/deals'
     | '/design-system'
+    | '/forgot-password'
     | '/inbox'
     | '/invoices'
+    | '/login'
     | '/mcp'
     | '/meetings'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/tasks'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -222,12 +252,15 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/deals'
     | '/design-system'
+    | '/forgot-password'
     | '/inbox'
     | '/invoices'
+    | '/login'
     | '/mcp'
     | '/meetings'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/tasks'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -243,12 +276,15 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/deals'
     | '/design-system'
+    | '/forgot-password'
     | '/inbox'
     | '/invoices'
+    | '/login'
     | '/mcp'
     | '/meetings'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/tasks'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -265,12 +301,15 @@ export interface RootRouteChildren {
   ContactsRoute: typeof ContactsRoute
   DealsRoute: typeof DealsRoute
   DesignSystemRoute: typeof DesignSystemRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   InboxRoute: typeof InboxRoute
   InvoicesRoute: typeof InvoicesRoute
+  LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   MeetingsRoute: typeof MeetingsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   TasksRoute: typeof TasksRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -286,6 +325,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -316,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invoices': {
       id: '/invoices'
       path: '/invoices'
@@ -328,6 +381,13 @@ declare module '@tanstack/react-router' {
       path: '/inbox'
       fullPath: '/inbox'
       preLoaderRoute: typeof InboxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/design-system': {
@@ -436,12 +496,15 @@ const rootRouteChildren: RootRouteChildren = {
   ContactsRoute: ContactsRoute,
   DealsRoute: DealsRoute,
   DesignSystemRoute: DesignSystemRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   InboxRoute: InboxRoute,
   InvoicesRoute: InvoicesRoute,
+  LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   MeetingsRoute: MeetingsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   TasksRoute: TasksRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

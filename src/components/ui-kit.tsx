@@ -19,6 +19,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/lib/theme";
 
 /* ---------- Button ---------- */
 type ButtonVariant = "primary" | "secondary" | "ghost" | "outline" | "danger";
@@ -479,19 +480,16 @@ export function SearchBar({
 
 /* ---------- Theme Toggle ---------- */
 export function ThemeToggle() {
-  const [dark, setDark] = useState(true);
-  useEffect(() => {
-    const html = document.documentElement;
-    if (dark) html.classList.add("dark");
-    else html.classList.remove("dark");
-  }, [dark]);
+  const [theme, , toggle] = useTheme();
+  const isDark = theme === "dark";
   return (
     <button
-      onClick={() => setDark((v) => !v)}
+      onClick={toggle}
       className="glass grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition hover:text-foreground"
-      aria-label="Toggle theme"
+      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+      title={`Switch to ${isDark ? "light" : "dark"} theme`}
     >
-      {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>
   );
 }
