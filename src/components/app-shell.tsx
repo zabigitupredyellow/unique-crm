@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
@@ -39,9 +39,16 @@ const nav = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [searchQ, setSearchQ] = useState("");
+
+  // Auth routes render without the shell chrome
+  if (pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password") {
+    return <>{children}</>;
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -167,22 +174,35 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-4 w-4" />
             </button>
 
-            <div className="relative ml-0 hidden max-w-md flex-1 sm:block">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const q = searchQ.trim();
+                if (!q) return;
+                navigate({ to: "/leads", search: { q } as never });
+              }}
+              className="relative ml-0 hidden max-w-md flex-1 sm:block"
+            >
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
                 placeholder="Search contacts, deals, tasks…"
                 className="glass h-10 w-full rounded-lg border-0 pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-[color:var(--ring)]"
               />
               <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground md:inline-block">
                 ⌘K
               </kbd>
-            </div>
+            </form>
 
             <div className="relative ml-auto flex items-center gap-2">
-              <button className="gradient-brand-bg glow-shadow-sm hidden items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] sm:inline-flex">
+              <Link
+                to="/leads"
+                className="gradient-brand-bg glow-shadow-sm hidden items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] sm:inline-flex"
+              >
                 <Plus className="h-4 w-4" />
                 New
-              </button>
+              </Link>
               <ThemeToggle />
               <button
                 onClick={() => setNotifOpen((v) => !v)}
