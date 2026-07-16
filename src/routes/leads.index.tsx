@@ -11,8 +11,11 @@ import {
   ChevronRight,
   Mail,
   Phone,
+  Trash2,
 } from "lucide-react";
 import { PageHeader, GlassCard, Badge, Avatar } from "@/components/crm-ui";
+import { Modal, Button, FormField, Input } from "@/components/ui-kit";
+import { useLeadStore, type StoredLead } from "@/lib/lead-store";
 
 export const Route = createFileRoute("/leads/")({
   head: () => ({
@@ -75,10 +78,14 @@ function LeadsPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<Status | "All">("All");
   const [page, setPage] = useState(1);
+  const [addOpen, setAddOpen] = useState(false);
+  const { added, add, remove } = useLeadStore();
+
+  const combined = useMemo<Lead[]>(() => [...added as Lead[], ...allLeads], [added]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
-    return allLeads.filter(
+    return combined.filter(
       (l) =>
         (status === "All" || l.status === status) &&
         (q === "" ||
@@ -86,28 +93,48 @@ function LeadsPage() {
           l.company.toLowerCase().includes(q) ||
           l.email.toLowerCase().includes(q)),
     );
-  }, [query, status]);
+  }, [query, status, combined]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageSafe = Math.min(page, totalPages);
   const rows = filtered.slice((pageSafe - 1) * PAGE_SIZE, pageSafe * PAGE_SIZE);
+  const addedIds = new Set(added.map((l) => l.id));
 
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader
         title="Leads"
-        subtitle={`${filtered.length} leads · ${allLeads.filter((l) => l.status === "New").length} new this week`}
+        subtitle={`${filtered.length} leads · ${combined.filter((l) => l.status === "New").length} new`}
         actions={
           <div className="flex items-center gap-2">
-            <button className="glass inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium">
-              <Upload className="h-4 w-4" />
-              <span className="hidden sm:inline">Import</span>
-            </button>
-            <button className="glass inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium">
+            <button
+              onClick={() => {
+                const blob = new Blob(
+                  ["name,company,email,phone,status,priority,owner,created\n" +
+                    combined.map((l) => [l.name, l.company, l.email, l.phone, l.status, l.priority, l.owner, l.created].join(",")).join("\n")],
+                  { type: "text/csv" },
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url; a.download = "leads.csv"; a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="glass inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium"
+            >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button className="gradient-brand-bg glow-shadow-sm inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02]">
+            <button
+              onClick={() => alert("Import CSV coming soon — connect Lovable Cloud to enable.")}
+              className="glass inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium"
+            >
+              <Upload className="h-4 w-4" />
+              <span className="hidden sm:inline">Import</span>
+            </button>
+            <button
+              onClick={() => setAddOpen(true)}
+              className="gradient-brand-bg glow-shadow-sm inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02]"
+            >
               <Plus className="h-4 w-4" />
               Add Lead
             </button>
@@ -215,15 +242,25 @@ function LeadsPage() {
                     <td className="px-3 py-3 text-muted-foreground">{l.created}</td>
                     <td className="px-3 py-3">
                       <div className="flex justify-end gap-1">
-                        <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
+                        <a href={`mailto:${l.email}`} className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
                           <Mail className="h-3.5 w-3.5" />
-                        </button>
-                        <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
+                        </a>
+                        <a href={`tel:${l.phone}`} className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
                           <Phone className="h-3.5 w-3.5" />
-                        </button>
-                        <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
-                          <MoreHorizontal className="h-3.5 w-3.5" />
-                        </button>
+                        </a>
+                        {addedIds.has(l.id) ? (
+                          <button
+                            onClick={() => remove(l.id)}
+                            title="Delete lead"
+                            className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-rose-300"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        ) : (
+                          <button className="glass grid h-8 w-8 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
+                            <MoreHorizontal className="h-3.5 w-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -284,6 +321,101 @@ function LeadsPage() {
           </div>
         </div>
       </GlassCard>
+
+      <AddLeadModal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onCreate={(l) => {
+          add(l);
+          setAddOpen(false);
+          setPage(1);
+        }}
+      />
     </div>
+  );
+}
+
+function AddLeadModal({
+  open,
+  onClose,
+  onCreate,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreate: (l: Omit<StoredLead, "id" | "created">) => void;
+}) {
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState<StoredLead["status"]>("New");
+  const [priority, setPriority] = useState<StoredLead["priority"]>("Medium");
+  const [owner, setOwner] = useState("Alex N.");
+
+  const reset = () => {
+    setName(""); setCompany(""); setEmail(""); setPhone("");
+    setStatus("New"); setPriority("Medium"); setOwner("Alex N.");
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={() => { onClose(); reset(); }}
+      title="Add lead"
+      footer={
+        <>
+          <Button variant="ghost" onClick={() => { onClose(); reset(); }}>Cancel</Button>
+          <Button
+            onClick={() => {
+              if (!name || !email) return;
+              onCreate({ name, company, email, phone, status, priority, owner });
+              reset();
+            }}
+          >
+            Create lead
+          </Button>
+        </>
+      }
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField label="Full name">
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
+        </FormField>
+        <FormField label="Company">
+          <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Corp" />
+        </FormField>
+        <FormField label="Email">
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="jane@acme.co" />
+        </FormField>
+        <FormField label="Phone">
+          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555…" />
+        </FormField>
+        <FormField label="Status">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as StoredLead["status"])}
+            className="glass h-10 w-full rounded-lg border-0 px-3 text-sm outline-none focus:ring-2 focus:ring-[color:var(--ring)]"
+          >
+            {(["New", "Contacted", "Qualified", "Proposal", "Won", "Lost"] as const).map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </FormField>
+        <FormField label="Priority">
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value as StoredLead["priority"])}
+            className="glass h-10 w-full rounded-lg border-0 px-3 text-sm outline-none focus:ring-2 focus:ring-[color:var(--ring)]"
+          >
+            {(["High", "Medium", "Low"] as const).map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </FormField>
+        <FormField label="Owner">
+          <Input value={owner} onChange={(e) => setOwner(e.target.value)} />
+        </FormField>
+      </div>
+    </Modal>
   );
 }

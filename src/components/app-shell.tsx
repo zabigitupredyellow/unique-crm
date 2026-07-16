@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard,
@@ -19,7 +19,9 @@ import {
   X,
   ChevronsLeft,
   ChevronsRight,
+  Palette,
 } from "lucide-react";
+import { ThemeToggle, NotificationPanel, UserMenu } from "@/components/ui-kit";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -31,13 +33,22 @@ const nav = [
   { to: "/meetings", label: "Meetings", icon: CalendarDays },
   { to: "/invoices", label: "Invoices", icon: Receipt },
   { to: "/reports", label: "Reports", icon: BarChart3 },
+  { to: "/design-system", label: "Design System", icon: Palette },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [searchQ, setSearchQ] = useState("");
+
+  // Auth routes render without the shell chrome
+  if (pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password") {
+    return <>{children}</>;
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -163,29 +174,46 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-4 w-4" />
             </button>
 
-            <div className="relative ml-0 hidden max-w-md flex-1 sm:block">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const q = searchQ.trim();
+                if (!q) return;
+                navigate({ to: "/leads", search: { q } as never });
+              }}
+              className="relative ml-0 hidden max-w-md flex-1 sm:block"
+            >
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
                 placeholder="Search contacts, deals, tasks…"
                 className="glass h-10 w-full rounded-lg border-0 pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-[color:var(--ring)]"
               />
               <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground md:inline-block">
                 ⌘K
               </kbd>
-            </div>
+            </form>
 
-            <div className="ml-auto flex items-center gap-2">
-              <button className="gradient-brand-bg glow-shadow-sm hidden items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] sm:inline-flex">
+            <div className="relative ml-auto flex items-center gap-2">
+              <Link
+                to="/leads"
+                className="gradient-brand-bg glow-shadow-sm hidden items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-white transition-transform hover:scale-[1.02] sm:inline-flex"
+              >
                 <Plus className="h-4 w-4" />
                 New
-              </button>
-              <button className="glass relative grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition hover:text-foreground">
+              </Link>
+              <ThemeToggle />
+              <button
+                onClick={() => setNotifOpen((v) => !v)}
+                className="glass relative grid h-10 w-10 place-items-center rounded-lg text-muted-foreground transition hover:text-foreground"
+                aria-label="Notifications"
+              >
                 <Bell className="h-4 w-4" />
                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[color:var(--brand-pink)] shadow-[0_0_8px_var(--brand-pink)]" />
               </button>
-              <div className="gradient-brand-bg glow-shadow-sm grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold text-white">
-                AN
-              </div>
+              <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
+              <UserMenu />
             </div>
           </header>
 

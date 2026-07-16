@@ -2,7 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark, .dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -49,9 +49,60 @@
   --color-glow: var(--glow);
 }
 
+/* Light theme (default) */
 :root {
   --radius: 0.75rem;
-  /* Dark-first: light values mirror dark for visual consistency in this template */
+  --background: oklch(0.985 0.005 300);
+  --foreground: oklch(0.20 0.03 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.20 0.03 285);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.20 0.03 285);
+  --primary: oklch(0.58 0.22 310);
+  --primary-foreground: oklch(0.99 0.005 300);
+  --secondary: oklch(0.96 0.01 300);
+  --secondary-foreground: oklch(0.25 0.03 285);
+  --muted: oklch(0.96 0.01 300);
+  --muted-foreground: oklch(0.48 0.03 290);
+  --accent: oklch(0.62 0.24 340);
+  --accent-foreground: oklch(0.99 0.005 300);
+  --destructive: oklch(0.60 0.24 15);
+  --destructive-foreground: oklch(0.99 0.005 300);
+  --border: oklch(0.20 0.03 285 / 10%);
+  --input: oklch(0.20 0.03 285 / 8%);
+  --ring: oklch(0.58 0.22 310);
+  --chart-1: oklch(0.58 0.22 310);
+  --chart-2: oklch(0.62 0.24 340);
+  --chart-3: oklch(0.55 0.20 280);
+  --chart-4: oklch(0.68 0.18 325);
+  --chart-5: oklch(0.50 0.20 300);
+  --sidebar: oklch(0.985 0.005 300);
+  --sidebar-foreground: oklch(0.30 0.03 285);
+  --sidebar-primary: oklch(0.58 0.22 310);
+  --sidebar-primary-foreground: oklch(0.99 0.005 300);
+  --sidebar-accent: oklch(0.96 0.01 300);
+  --sidebar-accent-foreground: oklch(0.25 0.03 285);
+  --sidebar-border: oklch(0.20 0.03 285 / 8%);
+  --sidebar-ring: oklch(0.58 0.22 310);
+
+  --brand-purple: oklch(0.58 0.22 310);
+  --brand-pink: oklch(0.62 0.24 340);
+  --glow: oklch(0.70 0.26 325);
+
+  --gradient-brand: linear-gradient(135deg, oklch(0.58 0.22 310), oklch(0.62 0.24 340));
+  --gradient-glow: radial-gradient(circle at 30% 20%, oklch(0.68 0.24 310 / 0.10), transparent 60%),
+                   radial-gradient(circle at 80% 70%, oklch(0.72 0.25 340 / 0.10), transparent 60%);
+  --shadow-glow: 0 0 40px oklch(0.68 0.24 310 / 0.20), 0 0 80px oklch(0.72 0.25 340 / 0.10);
+  --shadow-glow-sm: 0 0 20px oklch(0.68 0.24 310 / 0.18);
+
+  --glass-tint: oklch(1 0 0);
+  --glass-border: oklch(0.20 0.03 285 / 10%);
+  --overlay-soft: oklch(0.20 0.03 285 / 4%);
+  --overlay-strong: oklch(0.20 0.03 285 / 8%);
+}
+
+/* Dark theme (premium purple) */
+.dark {
   --background: oklch(0.16 0.03 285);
   --foreground: oklch(0.97 0.01 300);
   --card: oklch(0.20 0.035 285);
@@ -94,11 +145,11 @@
                    radial-gradient(circle at 80% 70%, oklch(0.72 0.25 340 / 0.30), transparent 60%);
   --shadow-glow: 0 0 40px oklch(0.68 0.24 310 / 0.35), 0 0 80px oklch(0.72 0.25 340 / 0.20);
   --shadow-glow-sm: 0 0 20px oklch(0.68 0.24 310 / 0.25);
-}
 
-.dark {
-  --background: oklch(0.16 0.03 285);
-  --foreground: oklch(0.97 0.01 300);
+  --glass-tint: oklch(1 0 0);
+  --glass-border: oklch(1 0 0 / 10%);
+  --overlay-soft: oklch(1 0 0 / 5%);
+  --overlay-strong: oklch(1 0 0 / 10%);
 }
 
 @layer base {
@@ -106,9 +157,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
-  html {
-    color-scheme: dark;
-  }
+  html.dark { color-scheme: dark; }
+  html:not(.dark) { color-scheme: light; }
   * {
     border-color: var(--color-border);
   }
@@ -130,13 +180,13 @@
 @utility glass {
   background: color-mix(in oklab, var(--card) 55%, transparent);
   backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid color-mix(in oklab, white 8%, transparent);
+  border: 1px solid var(--glass-border);
 }
 
 @utility glass-strong {
-  background: color-mix(in oklab, var(--card) 78%, transparent);
+  background: color-mix(in oklab, var(--card) 82%, transparent);
   backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid color-mix(in oklab, white 10%, transparent);
+  border: 1px solid var(--glass-border);
 }
 
 @utility gradient-text {
@@ -179,4 +229,21 @@
 }
 @utility animate-pulse-glow {
   animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Soften stark white overlays in light mode so borders/hover stay visible */
+html:not(.dark) .border-white\/5,
+html:not(.dark) .border-white\/10 {
+  border-color: var(--glass-border) !important;
+}
+html:not(.dark) .bg-white\/5,
+html:not(.dark) .bg-white\/\[0\.03\] {
+  background-color: var(--overlay-soft) !important;
+}
+html:not(.dark) .bg-white\/10 {
+  background-color: var(--overlay-strong) !important;
+}
+html:not(.dark) .hover\:bg-white\/5:hover,
+html:not(.dark) .hover\:bg-white\/10:hover {
+  background-color: var(--overlay-strong) !important;
 }
